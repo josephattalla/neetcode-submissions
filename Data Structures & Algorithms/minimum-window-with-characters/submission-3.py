@@ -1,0 +1,33 @@
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        ret = ""
+        subset = {}
+        found = {}
+        need = len(t)
+        have = 0
+
+        for c in t:
+            subset[c] = subset.get(c, 0) + 1
+
+        l = 0
+        r = 0
+        while r < len(s):
+            if s[r] in subset:
+                found[s[r]] = found.get(s[r], 0) + 1
+                remaining = subset[s[r]] - found[s[r]]
+                have += 1 if remaining >= 0 else 0
+
+            while len(found) == len(subset) and have == need:
+                ret = s[l:r+1] if r-l+1 < len(ret) or ret == "" else ret
+
+                if s[l] in found:
+                    found[s[l]] -= 1
+                    remaining = subset[s[l]] - found[s[l]]
+                    have -= 1 if remaining > 0 else 0
+                    if found[s[l]] <= 0:
+                        found.pop(s[l])
+                l += 1
+            
+            r += 1
+
+        return ret
